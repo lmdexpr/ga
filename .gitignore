@@ -1,9 +1,20 @@
+/RUNNING_PID
+/logs/
+/project/*-shim.sbt
+/project/project/
+/project/target/
+/target/
+
+# Eclipse
+/.classpath
+/.project
+
 *.class
 *.log
 
 # sbt specific
 .cache
-.history
+.history/
 .lib/
 dist/*
 target/
