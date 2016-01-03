@@ -1,4 +1,4 @@
-name := """akka-scala-seed"""
+name := """ga"""
 
 version := "1.0"
 
