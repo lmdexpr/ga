@@ -1,3 +1,17 @@
 # ga
-kosen procon26 で使おうとしたけどビームサーチによって滅ぼされた実数値GAの再実装
-をするつもりだったけれども、飽きてきた
+「実数値遺伝的アルゴリズムの性能評価」
+NIT, KC, KC grade4後期の創造実験
+
+# Xover Operation
+* BLX-α
+* eUNDX
+* eSPX
+* REX
+
+# Generation Model
+* BBC
+* MGG
+* JGG
+
+# parallel
+* island model
