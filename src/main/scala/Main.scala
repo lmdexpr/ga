@@ -4,26 +4,34 @@ import math._
 
 import scalaz._, Scalaz._
 
-import blxA_mgg._
-//import rex_jgg._
+import ga.model._
+import ga.gene._
+import ga.traits._
 
 object Main extends App {
   //val system = akka.actor.ActorSystem("ga")
 
-  val generation_count = 150000 + 1
-  val chromosome_count = 3
+  val dim = 2
 
-  def eval(g: Gene) = 10 * chromosome_count + g.chromosomes.map(v => v * v - 10 * cos(2*Pi*v)).sum
+  def eval(g: Gene) = 10 * dim + g.chromosomes.map(v => v * v - 10 * cos(2*Pi*v)).sum
 
-  // Model(1世代の遺伝子数, 染色体数, 子供の数, パラメータの最小値, 最大値, 評価関数) 
-  val first: \/[String, Model] = Model(100, chromosome_count, 100, -5.12, 5.12, eval).right
+  val answer  = 0.0
+  val epsilon = 1.0
 
-  Iterator.iterate(first) {_ >>= (_.next)} take generation_count foreach {
-    for (model <- _) {
+  // Model((次元数, パラメータの最小値, 最大値), 子供の数, 親の数, 評価関数) 
+  val first = Jgg(Array.fill(100)(BlxA(dim, -5.12, 5.12)), 100, 2, eval(_))
+
+  Iterator.iterate(first)(_.next) map {
+    model => {
       val eval_table = model.genes map eval
-      val avg = eval_table.sum / eval_table.size
-      println(model.n_th)
-      println("best score: " + eval_table.min.toString)
+      (model.nth, eval_table.min, eval_table.sum / eval_table.size)
+    }
+  } takeWhile {
+    case (_, best, _) => abs(best) > (answer + epsilon)
+  } foreach {
+    case (nth, best, avg) => {
+      println(nth)
+      println("best score: " + best.toString)
       println("average score: " + avg.toString)
       println()
     }
