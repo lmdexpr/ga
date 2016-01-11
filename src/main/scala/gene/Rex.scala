@@ -7,13 +7,21 @@ case class Rex(chromosomes: Chromosome, minimum: Double, maximum: Double) extend
   import scala.math._
 
   def crossover(g: Seq[Gene]) = {
-    // TODO
+    /*require(g.size >= chromosomes.size, "REX required (n+k) parents")
+    val parents = (this +: g) map (_.chromosomes)
+    val gravity = parents.transpose map (x => x.sum/x.size)
 
-    Rex(this.chromosomes, minimum, maximum)
+    lazy val x =
+      Seq.tabulate(parents.size)(k =>
+        Seq.tabulate(gravity.size)(i =>
+          gravity(i) + epsilon * (parents(k)(i) - gravity(i))))
+
+    def c(i: Int): Chromosome =
+      if (i == 0) Seq.fill(gravity.size)(0.0)
+      else { (x(i-1), x(i), c(i-1)).zipped.toSeq map (t => pow(Random.double(0)(1), 1.0/i) * (t._1 - t._2 + t._3)) }
+
+    Rex(x(gravity.size) zip c(gravity.size) map {case (xi, ci) => xi + ci}, minimum, maximum)
+    */
+    Rex(chromosomes, minimum, maximum)
   }
-}
-
-object Rex extends GeneFactory {
-  type Original = Rex
-  def apply(n: Int, min: Double, max: Double) = new Rex(Seq.fill(n)(ga.util.Random.double(min)(max)), min, max)
 }

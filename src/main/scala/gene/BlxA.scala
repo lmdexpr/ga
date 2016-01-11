@@ -18,10 +18,5 @@ case class BlxA(chromosomes: Chromosome, minimum: Double, maximum: Double) exten
     BlxA(this.chromosomes zip g.chromosomes map generate, minimum, maximum)
   }
 
-  def crossover(g: Seq[Gene]): Gene = this crossover (scala.util.Random.shuffle(g).headOption | this)
-}
-
-object BlxA extends GeneFactory {
-  type Original = BlxA
-  def apply(n: Int, min: Double, max: Double) = new BlxA(Seq.fill(n)(ga.util.Random.double(min)(max)), min, max)
+  def crossover(g: Seq[Gene]): Gene = this crossover g.head
 }
