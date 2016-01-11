@@ -1,6 +1,6 @@
 package ga.traits
 
-trait Target {
+trait Functions {
   val minimum: Double
   val maximum: Double
 

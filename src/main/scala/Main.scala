@@ -7,7 +7,7 @@ import scalaz._, Scalaz._
 import ga.model._
 import ga.gene._
 import ga.traits._
-import ga.target._
+import ga.functions._
 
 object Main extends App {
   //val system = akka.actor.ActorSystem("ga")
@@ -20,8 +20,11 @@ object Main extends App {
   val epsilon = 1E-7
   val limit   = 1E6
 
+  type XOP = SPXe
+  type GM  = JGG[XOP]
+
   // Model((集団サイズ)Xop(次元数, パラメータの最小値, 最大値), 子供の数, 親の数, 評価関数) 
-  val first = ModelFactory.create[BlxA, MGG[BlxA]](dim, npop, nc, np, f)
+  val first = ModelFactory.create[XOP, GM](dim, npop, nc, np, f)
 
   Iterator.iterate(first)(_.next) map {
     model => {

@@ -15,7 +15,7 @@ trait Model[T <: Gene] {
 }
 
 object ModelFactory {
-  def create[T <: Gene: ClassTag, S <: Model[T]](dim: Int, npop: Int, nc: Int, np: Int, func: Target)(implicit g_tag: ru.TypeTag[T], m_tag: ru.TypeTag[S]): S = {
+  def create[T <: Gene: ClassTag, S <: Model[T]](dim: Int, npop: Int, nc: Int, np: Int, func: Functions)(implicit g_tag: ru.TypeTag[T], m_tag: ru.TypeTag[S]): S = {
     val g_con = ru.typeTag[T].mirror.reflectClass(ru.typeOf[T].typeSymbol.asClass).reflectConstructor(g_tag.tpe.member(ru.termNames.CONSTRUCTOR).asMethod)
     val min   = func.minimum
     val max   = func.maximum
