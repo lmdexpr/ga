@@ -4,7 +4,7 @@ version := "1.0"
 
 scalaVersion := "2.11.7"
 
-scalacOptions ++= Seq("-unchecked", "-deprecation")
+scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-reflect" % "2.11.7",

@@ -7,6 +7,8 @@ case class Tablet() extends Functions {
   val minimum = -5.12
   val maximum = 5.12
 
+  val answer = 0.0
+
   def eval(g: Gene) = {
     val k = g.chromosomes.size / 4
     val chromo = g.chromosomes.splitAt(k)

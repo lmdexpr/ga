@@ -1,50 +1,62 @@
 package ga.island
 
+import util.Random.shuffle
+
 import ga.traits._
-import akka.actor.Actor
+import ga.util._
+
 import scalaz._, Scalaz._
 
-/*
- * TODO
+import akka.actor._
+import scalaz._, Scalaz._
 
-sealed trait Message
-case class Next() extends Message
-case class Migration(islands: Seq[Island]) extends Message
-case class Syn(g:Gene) extends Message
-case class Ack(g:Gene) extends Message
-case class Fin() extends Message
+class Island[XOP <: Gene, GM <: Model[XOP]](creator: () => GM) extends Actor with Stash {
+  import Island.Protocol._
 
-case class Island(var model: \/[String, Model[Gene]], rate: Double, interval: Int) extends Actor {
-  import ga.util._
-  import scala.util.Random.shuffle
+  var population = creator ()
 
-  def recieve = {
+  def migrate(i: Int, gene: XOP, actors: Seq[ActorRef]) = {
+    population.genes(i) = gene
+    Migration(population.genes(Random.nat(population.genes.size - 1)), actors)
+  }
+
+  def receive = {
     case Next => {
-      model.next match {
-        case \/-(m) => model = m
-      }
+      population = population.next.asInstanceOf[GM]
+      sender ! population
     }
 
-    case Migration(islands) => {
-      val i      = Random.nat(first.genes.size - 1)
-      val abroad = shuffle(islands).head
-      val ack    = abroad ? Syn(model.genes(i))
-      ack.onSuccess {
-        case reply => {
-          model.genes(i) = reply
-          abroad ! Fin
-        }
-      }
+    case Prepare(actors: Seq[ActorRef]) => {
+      val i = Random.nat(population.genes.size - 1)
+      val self  = actors.head
+      val queue = actors.tail
+      (queue.headOption | self) ! Migration(population.genes(i), (queue.isEmpty? queue | queue.tail) :+ self)
+      context become waitMigration(sender, i)
     }
 
-    case Syn(g) => {
-      val i   = Random.nat(model.genes.size - 1)
-      val fin = sender ? model.genes(i)
-
-      fin.onSuccess {
-        case Fin => model.genes(i) = g
-      }
+    case Migration(gene: XOP, actors: Seq[ActorRef]) => {
+      val i = population.genes.zipWithIndex.map((x: (XOP, Int)) => (population.eval(x._1), x._2)).max._2
+      actors.head ! migrate(i, gene, actors.tail)
     }
   }
+
+  def waitMigration(master: ActorRef, i: Int): Receive = {
+    case Migration(gene: XOP, _) => {
+      population.genes(i) = gene
+
+      context.unbecome()
+      unstashAll()
+    }
+
+    case _ => stash ()
+  }
 }
-*/
+
+object Island {
+  object Protocol {
+    sealed trait Message
+    case object Next extends Message
+    case class Prepare(actors: Seq[ActorRef]) extends Message
+    case class Migration[XOP](gene: XOP, actors: Seq[ActorRef]) extends Message
+  }
+}

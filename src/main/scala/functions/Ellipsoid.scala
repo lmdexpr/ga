@@ -7,6 +7,8 @@ case class Ellipsoid() extends Functions {
   val minimum = -5.12
   val maximum = 5.12
 
+  val answer = 0.0
+
   def eval(g: Gene) = {
     val chromos = g.chromosomes
     val n       = chromos.size

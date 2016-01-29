@@ -7,6 +7,8 @@ case class Ackley() extends Functions {
   val minimum = -32.768
   val maximum = 32.768
 
+  val answer = 0.0
+
   def eval(g: Gene) = {
     val chromos = g.chromosomes
     val n = chromos.size
